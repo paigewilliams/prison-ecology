@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
 import mapboxgl from "mapbox-gl";
 import scrollama from "scrollama";
@@ -28,24 +28,32 @@ const transformRequest = (url) => {
   };
 };
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      currentChapter: props.chapters[0],
-    };
-    // this.setState = this.setState.bind(this);
-  }
 
-  componentDidMount() {
-    const config = this.props;
-    const mapStart = config.chapters[0].location;
+function Chapter({ id, theme, title, image, description, currentChapterID, map }) {
+  const classList = id === currentChapterID ? "step active" : "step";
+  return (
+    <div id={id} className={classList}>
+      <div className={theme}>
+        {title && <h3 className="title">{title}</h3>}
+        {image && <img src={image} alt={title}></img>}
+        {description && <p dangerouslySetInnerHTML={{ __html: description }} />}
+      </div>
+    </div>
+  );
+}
 
-    mapboxgl.accessToken = config.accessToken;
+const App = ({chapters, theme, style, accessToken, title, subtitle, byline, alignment, footer}) => {
+  const [currentChapter, setCurrentChapter] = useState(chapters[0]);
+  const mapContainter = useRef();
+  const scroller = scrollama();
+
+  useEffect(() => {
+    const mapStart = chapters[0].location;
+    mapboxgl.accessToken = accessToken;
 
     const map = new mapboxgl.Map({
-      container: this.mapContainer,
-      style: config.style,
+      container: mapContainter.current,
+      style: style,
       center: mapStart.center,
       zoom: mapStart.zoom,
       pitch: mapStart.pitch,
@@ -57,7 +65,7 @@ class App extends Component {
       var layerType = map.getLayer(layer).type;
       return layerTypes[layerType];
     }
-
+    
     function setLayerOpacity(layer) {
       var paintProps = getLayerPaintType(layer.layer);
       paintProps.forEach(function (prop) {
@@ -65,10 +73,6 @@ class App extends Component {
       });
     }
 
-    const setState = this.setState.bind(this);
-
-    // instantiate the scrollama
-    const scroller = scrollama();
 
     map.on("load", function () {
       // setup the instance, pass callback functions
@@ -79,10 +83,10 @@ class App extends Component {
           progress: true,
         })
         .onStepEnter((response) => {
-          const chapter = config.chapters.find(
+          const chapter = chapters.find(
             (chap) => chap.id === response.element.id
           );
-          setState({ currentChapter: chapter });
+          setCurrentChapter(chapter);
           map.flyTo(chapter.location);
 
           if (chapter.onChapterEnter.length > 0) {
@@ -90,7 +94,7 @@ class App extends Component {
           }
         })
         .onStepExit((response) => {
-          var chapter = config.chapters.find(
+          var chapter = chapters.find(
             (chap) => chap.id === response.element.id
           );
           if (chapter.onChapterExit.length > 0) {
@@ -99,59 +103,52 @@ class App extends Component {
         });
     });
 
-    window.addEventListener("resize", scroller.resize);
-  }
 
-  render() {
-    const config = this.props;
-    const theme = config.theme;
-    const currentChapterID = this.state.currentChapter.id;
-    return (
+
+    window.addEventListener("resize", scroller.resize);
+
+  }, [mapContainter]);
+
+  useEffect(() => {
+    if(currentChapter.id === 'involved'){
+      scroller.destroy()
+    }
+  }, [currentChapter])
+  
+
+  return (
       <div>
         <div
-          ref={(el) => (this.mapContainer = el)}
+          ref={mapContainter}
           className="absolute top right left bottom"
         />
         <div id="story">
-          {config.title && (
+          {title && (
             <div id="header" className={theme}>
-              <h1>{config.title}</h1>
-              {config.subtitle && <h2>{config.subtitle}</h2>}
-              {config.byline && <p>{config.byline}</p>}
+              <h1>{title}</h1>
+              {subtitle && <h2>{subtitle}</h2>}
+              {byline && <p>{byline}</p>}
             </div>
           )}
-          <div id="features" className={alignments[config.alignment]}>
-            {config.chapters.map((chapter) => (
+          <div id="features" className={alignments[alignment]}>
+            {chapters.map((chapter) => (
               <Chapter
                 key={chapter.id}
                 theme={theme}
                 {...chapter}
-                currentChapterID={currentChapterID}
+                currentChapterID={currentChapter.id}
               />
             ))}
           </div>
-          {config.footer && (
+          {footer && (
             <div id="footer" className={theme}>
-              <p>{config.footer}</p>
+              <p>{footer}</p>
             </div>
           )}
         </div>
       </div>
-    );
-  }
-}
+  )
 
-function Chapter({ id, theme, title, image, description, currentChapterID }) {
-  const classList = id === currentChapterID ? "step active" : "step";
-  return (
-    <div id={id} className={classList}>
-      <div className={theme}>
-        {title && <h3 className="title">{title}</h3>}
-        {image && <img src={image} alt={title}></img>}
-        {description && <p dangerouslySetInnerHTML={{ __html: description }} />}
-      </div>
-    </div>
-  );
 }
 
 export default App;
