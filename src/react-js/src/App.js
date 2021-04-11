@@ -108,14 +108,16 @@ const App = ({chapters, theme, style, accessToken, title, subtitle, byline, alig
 
 
     window.addEventListener("resize", scroller.resize);
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapContainter]);
 
   useEffect(() => {
     if(currentChapter.id === 'involved'){
       scroller.destroy()
     }
-  }, [currentChapter])
+  }, 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [currentChapter])
   
 
   return (
