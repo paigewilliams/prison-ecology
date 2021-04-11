@@ -124,7 +124,7 @@ const config = {
       id: "involved",
       title: "How To Get Involved",
       description:
-        '<strong>1.</strong> Send a <a href="https://actionnetwork.org/letters/no-new-prison-in-district-12-2">message</a> to the BOP against their plans for the Letcher County Prison.<br></br> <strong>2.</strong> Join the <a href="https://actionnetwork.org/forms/become-a-champion">Prison Ecology email list</a> and invite others to do the same.<br></br><strong>3.</strong> Like and Share the Campaign to Fight Toxic Prisons on <a href="https://www.facebook.com/Campaign-to-Fight-Toxic-Prisons-1744188675811724/?fref=ts">Facebook</a> and <a href="https://twitter.com/FightXPrisons">Twitter.</a>',
+        '<strong>1.</strong> Join the <a href="https://actionnetwork.org/forms/become-a-champion">Prison Ecology email list</a> and invite others to do the same.<br></br><strong>2.</strong> Like and Share the Campaign to Fight Toxic Prisons on <a href="https://www.facebook.com/Campaign-to-Fight-Toxic-Prisons-1744188675811724/?fref=ts">Facebook</a> and <a href="https://twitter.com/FightXPrisons">Twitter.</a>',
       location: {
         center: [-98.4375, 39.4022],
         zoom: 4,

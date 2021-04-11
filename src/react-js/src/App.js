@@ -61,6 +61,8 @@ const App = ({chapters, theme, style, accessToken, title, subtitle, byline, alig
       transformRequest: transformRequest,
     });
 
+    map.addControl(new mapboxgl.NavigationControl());
+
     function getLayerPaintType(layer) {
       var layerType = map.getLayer(layer).type;
       return layerTypes[layerType];
